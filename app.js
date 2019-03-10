@@ -5,59 +5,58 @@ const path = require('path');
 
 const app = express();
 
-// BodyParser Middleware
-app.use(bodyParser.urlencoded({extended: true}));
+// Bodyparser Middleware
+app.use(bodyParser.urlencoded({ extended: true }));
 
-
-// Statuc folder
+// Static folder
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Signup Route
 app.post('/signup', (req, res) => {
-    const { firstName, lastName, email } = req.body;
+  const { firstName, lastName, email } = req.body;
 
-    // Make sure fields are filled
-    if(!firstName || !lastName || !email) {
-        res.redirect('/fail.html');
-        return;
-    }
+  // Make sure fields are filled
+  if (!firstName || !lastName || !email) {
+    res.redirect('/fail.html');
+    return;
+  }
 
-    // Construct req. data
-    const data = {
-        members: [
-            {
-                email_address: email,
-                status: 'subscribed',
-                merge_fields: {
-                    FNAME: firstName,
-                    LNAME: lastName
-                }
-            }
-        ]
-    }
-
-    const postData = JSON.stringify(data);
-
-    const options = {
-        url: 'https://us19.api.mailchimp.com/3.0/lists/742a440460',
-        method: 'POST',
-        header: {
-            Authorization: 'auth 75c13eafb8afeafbf581465e0aaa5743-us19'
-        },
-        body: postData
-    };
-
-    request(options, (err, response, body) => {
-        if(err) {
-                res.redirect('/fail.html');
-        } else {
-            if(response.statusCode === 200) {
-                res.redirect('/success.html');
-            } else {
-                res.redirect('/fail.html');
-            }
+  // Construct req data
+  const data = {
+    members: [
+      {
+        email_address: email,
+        status: 'subscribed',
+        merge_fields: {
+          FNAME: firstName,
+          LNAME: lastName
         }
-    });
+      }
+    ]
+  };
+
+  const postData = JSON.stringify(data);
+
+  const options = {
+    url: 'https://us19.api.mailchimp.com/3.0/lists/1bc15e8d3d',
+    method: 'POST',
+    headers: {
+      Authorization: 'auth 75c13eafb8afeafbf581465e0aaa5743-us1'
+    },
+    body: postData
+  };
+
+  request(options, (err, response, body) => {
+    if (err) {
+      res.redirect('/fail.html');
+    } else {
+      if (response.statusCode === 200) {
+        res.redirect('/success.html');
+      } else {
+        res.redirect('/fail.html');
+      }
+    }
+  });
 });
 
 const PORT = process.env.PORT || 5000;
